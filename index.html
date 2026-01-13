@@ -1,11 +1,55 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="refresh" content="0; URL=Login_site.html">
-    <title>Carregando Sistema...</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>umclick tecnologia | Redirecionando...</title>
+    <meta http-equiv="refresh" content="0; URL='login_site.html'">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #050a14; /* Cor azul deep do seu sistema */
+            font-family: 'Segoe UI', sans-serif;
+            color: white;
+        }
+        .loader-container {
+            text-align: center;
+        }
+        .loader {
+            border: 4px solid rgba(255, 255, 255, 0.1);
+            border-left-color: #00d4ff;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        h1 {
+            font-size: 1.2rem;
+            font-weight: 400;
+            letter-spacing: 1px;
+        }
+        span { color: #00d4ff; font-weight: 800; }
+    </style>
 </head>
 <body>
-    <p>Carregando Sistema...</p>
+
+    <div class="loader-container">
+        <div class="loader"></div>
+        <h1>um<span>click</span> tecnologia</h1>
+    </div>
+
+    <script>
+        // Redirecionamento via JavaScript (Mais rápido)
+        window.location.href = "login_site.html";
+    </script>
 </body>
 </html>
