@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>umclicktecnologia | Acesso ao Ecossistema</title>
+    <style>
+        /* Reset e Definições Gerais */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            border-radius: 0 !important;
+        }
+
+        body {
+            background-color: #050a14;
+            color: #ffffff;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .bg-lines {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, #050a14 25%, #081226 100%);
+            z-index: -1;
+        }
+
+        .login-container {
+            width: 100%;
+            max-width: 450px;
+            padding: 60px;
+            background-color: rgba(10, 20, 40, 0.9);
+            border-left: 4px solid #00d4ff;
+            box-shadow: 20px 20px 0px rgba(0, 0, 0, 0.4);
+        }
+
+        .logo-area {
+            margin-bottom: 40px;
+        }
+
+        .logo-area h1 {
+            font-size: 1.8rem;
+            font-weight: 800;
+            letter-spacing: -1px;
+            text-transform: lowercase;
+        }
+
+        .logo-area span {
+            color: #00d4ff;
+        }
+
+        .welcome-text p {
+            color: #8fa3ad;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            position: relative; /* Necessário para posicionar o olho */
+        }
+
+        label {
+            display: block;
+            font-size: 0.75rem;
+            margin-bottom: 8px;
+            color: #00d4ff;
+            text-transform: uppercase;
+            font-weight: bold;
+        }
+
+        input {
+            width: 100%;
+            padding: 15px;
+            padding-right: 50px; /* Espaço para o ícone */
+            background: #0d1b33;
+            border: 1px solid #1a2e4d;
+            color: white;
+            font-size: 1rem;
+            outline: none;
+            transition: all 0.3s;
+        }
+
+        input:focus {
+            border-color: #00d4ff;
+        }
+
+        /* Botão do Olho */
+        .toggle-password {
+            position: absolute;
+            right: 15px;
+            top: 38px; /* Ajustado para alinhar com o input abaixo da label */
+            cursor: pointer;
+            color: #4a6a8a;
+            background: none;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: color 0.3s;
+        }
+
+        .toggle-password:hover {
+            color: #00d4ff;
+        }
+
+        .btn-login {
+            width: 100%;
+            padding: 15px;
+            background-color: #00d4ff;
+            color: #050a14;
+            border: none;
+            font-weight: bold;
+            text-transform: uppercase;
+            cursor: pointer;
+            font-size: 0.9rem;
+            margin-top: 10px;
+        }
+
+        .btn-login:hover {
+            background-color: #00b8e6;
+        }
+
+        /* Estilo para mensagem de erro */
+        #error-msg {
+            color: #ff4b4b;
+            font-size: 0.75rem;
+            margin-top: 10px;
+            display: none;
+            text-transform: uppercase;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+
+        .footer-links {
+            margin-top: 25px;
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.8rem;
+        }
+
+        .footer-links a {
+            color: #8fa3ad;
+            text-decoration: none;
+        }
+
+        .footer-links a:hover {
+            color: #ffffff;
+        }
+
+        .system-info {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            font-size: 0.7rem;
+            color: #2a415f;
+            text-align: right;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="bg-lines"></div>
+
+    <div class="login-container">
+        <div class="logo-area">
+            <h1>um<span>click</span>tecnologia</h1>
+        </div>
+
+        <div class="welcome-text">
+            <p>Acesso ao Ecossistema</p>
+        </div>
+
+        <form id="loginForm">
+            <div class="form-group">
+                <label for="user">Identificação</label>
+                <input type="text" id="user" placeholder="E-mail ou Usuário" required>
+            </div>
+
+            <div class="form-group">
+                <label for="pass">Chave de Segurança</label>
+                <input type="password" id="pass" placeholder="••••••••" required>
+                <button type="button" class="toggle-password" onclick="toggleVisibility()">
+                    <svg id="eye-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                </button>
+            </div>
+
+            <button type="submit" class="btn-login">Entrar no Sistema</button>
+            <p id="error-msg">Usuário ou senha incorretos</p>
+        </form>
+
+        <div class="footer-links">
+            <a href="#">Esqueci minha senha</a>
+            <a href="#">Suporte Técnico</a>
+        </div>
+    </div>
+
+    <div class="system-info">
+        V 1.0.0 <br>
+        Infraestrutura de alta disponibilidade
+    </div>
+
+    <script>
+        function toggleVisibility() {
+            const passInput = document.getElementById('pass');
+            const eyeIcon = document.getElementById('eye-icon');
+            
+            if (passInput.type === 'password') {
+                passInput.type = 'text';
+                eyeIcon.style.color = '#00d4ff';
+            } else {
+                passInput.type = 'password';
+                eyeIcon.style.color = '#4a6a8a';
+            }
+        }
+
+        // Lógica de Autenticação
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const user = document.getElementById('user').value;
+            const pass = document.getElementById('pass').value;
+            const errorMsg = document.getElementById('error-msg');
+
+            // Verificação das credenciais solicitadas
+            if (user === 'matheus' && pass === 'teste1234') {
+                // Redireciona para a página do sistema
+                window.location.href = 'Sistema_site.html';
+            } else {
+                // Exibe erro e destaca campos
+                errorMsg.style.display = 'block';
+                document.getElementById('user').style.borderColor = '#ff4b4b';
+                document.getElementById('pass').style.borderColor = '#ff4b4b';
+            }
+        });
+    </script>
+</body>
+</html>
