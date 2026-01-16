@@ -3,201 +3,220 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>umclicktecnologia | Acesso ao Ecossistema</title>
+    <title>e-smart | Portal de Inteligência Governamental</title>
     <style>
-        /* Reset e Definições Gerais */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            border-radius: 0 !important;
+        /* Variáveis e Reset */
+        :root {
+            --azul-primario: #0078d4;
+            --azul-claro: #00d4ff;
+            --bg-escuro: #050a14;
+            --glass-bg: rgba(10, 20, 40, 0.85);
+            --border-color: #1a2e4d;
+        }
+
+        /* Reset Total - Bordas 0 Radius */
+        * { 
+            margin: 0; 
+            padding: 0; 
+            box-sizing: border-box; 
+            font-family: 'Segoe UI', system-ui, sans-serif; 
+            border-radius: 0 !important; 
         }
 
         body {
-            background-color: #050a14;
+            background-color: var(--bg-escuro);
             color: #ffffff;
             height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
             overflow: hidden;
+            background: radial-gradient(circle at center, #081226 0%, #050a14 100%);
         }
 
-        .bg-lines {
+        /* Efeito de brilho de fundo */
+        .bg-glow {
             position: absolute;
-            top: 0;
-            left: 0;
+            width: 500px; height: 500px;
+            background: var(--azul-primario);
+            filter: blur(150px);
+            opacity: 0.12;
+            z-index: 0;
+            animation: pulse 10s infinite alternate;
+        }
+
+        @keyframes pulse {
+            0% { transform: translate(-10%, -10%) scale(1); }
+            100% { transform: translate(10%, 10%) scale(1.2); }
+        }
+
+        /* CONTAINER AJUSTADO (MENOR) */
+        .login-card {
             width: 100%;
-            height: 100%;
-            background: linear-gradient(45deg, #050a14 25%, #081226 100%);
-            z-index: -1;
+            max-width: 460px; 
+            padding: 55px;    
+            background: var(--glass-bg);
+            border: 1px solid var(--border-color);
+            border-top: 5px solid var(--azul-claro);
+            box-shadow: 0 30px 60px -15px rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(12px);
+            position: relative;
+            z-index: 10;
         }
 
-        .login-container {
-            width: 100%;
-            max-width: 450px;
-            padding: 60px;
-            background-color: rgba(10, 20, 40, 0.9);
-            border-left: 4px solid #00d4ff;
-            box-shadow: 20px 20px 0px rgba(0, 0, 0, 0.4);
+        /* Logo Area */
+        .logo-area { margin-bottom: 40px; text-align: center; }
+        .logo-area h1 { 
+            font-size: 2.5rem; 
+            font-weight: 800; 
+            letter-spacing: -1.5px; 
+            text-transform: lowercase; 
+        }
+        .logo-area span { color: var(--azul-claro); }
+        .tagline { 
+            font-size: 0.75rem; 
+            text-transform: uppercase; 
+            letter-spacing: 5px; 
+            color: #4a6a8a; 
+            margin-top: 8px;
+            font-weight: 700;
         }
 
-        .logo-area {
-            margin-bottom: 40px;
-        }
-
-        .logo-area h1 {
-            font-size: 1.8rem;
+        /* Formulário */
+        .form-group { margin-bottom: 25px; position: relative; }
+        label { 
+            display: block; 
+            font-size: 0.75rem; 
+            margin-bottom: 10px; 
+            color: #8fa3ad; 
+            text-transform: uppercase; 
             font-weight: 800;
-            letter-spacing: -1px;
-            text-transform: lowercase;
-        }
-
-        .logo-area span {
-            color: #00d4ff;
-        }
-
-        .welcome-text p {
-            color: #8fa3ad;
-            font-size: 0.9rem;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            margin-bottom: 30px;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-            position: relative; /* Necessário para posicionar o olho */
-        }
-
-        label {
-            display: block;
-            font-size: 0.75rem;
-            margin-bottom: 8px;
-            color: #00d4ff;
-            text-transform: uppercase;
-            font-weight: bold;
+            letter-spacing: 1px;
         }
 
         input {
             width: 100%;
-            padding: 15px;
-            padding-right: 50px; /* Espaço para o ícone */
-            background: #0d1b33;
-            border: 1px solid #1a2e4d;
+            padding: 16px 20px;
+            background: rgba(5, 10, 20, 0.6);
+            border: 1px solid var(--border-color);
             color: white;
             font-size: 1rem;
             outline: none;
-            transition: all 0.3s;
+            transition: all 0.2s ease;
         }
 
         input:focus {
-            border-color: #00d4ff;
+            border-color: var(--azul-claro);
+            background: rgba(5, 10, 20, 0.9);
         }
 
-        /* Botão do Olho */
+        .input-icon-wrapper { position: relative; }
+        
         .toggle-password {
             position: absolute;
             right: 15px;
-            top: 38px; /* Ajustado para alinhar com o input abaixo da label */
+            top: 50%;
+            transform: translateY(-50%);
             cursor: pointer;
             color: #4a6a8a;
             background: none;
             border: none;
             display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: color 0.3s;
+            padding: 8px;
         }
 
-        .toggle-password:hover {
-            color: #00d4ff;
-        }
-
+        /* Botão de Ação */
         .btn-login {
             width: 100%;
-            padding: 15px;
-            background-color: #00d4ff;
-            color: #050a14;
+            padding: 18px; 
+            background: var(--azul-claro);
+            color: var(--bg-escuro);
             border: none;
-            font-weight: bold;
+            font-weight: 900;
             text-transform: uppercase;
             cursor: pointer;
             font-size: 0.9rem;
+            letter-spacing: 2px;
             margin-top: 10px;
+            transition: all 0.3s;
         }
 
         .btn-login:hover {
-            background-color: #00b8e6;
+            background: #fff;
+            transform: translateY(-2px);
         }
 
-        /* Estilo para mensagem de erro */
+        /* Mensagem de Erro */
         #error-msg {
-            color: #ff4b4b;
-            font-size: 0.75rem;
-            margin-top: 10px;
+            color: #ff4757;
+            font-size: 0.8rem;
+            margin-bottom: 20px;
             display: none;
-            text-transform: uppercase;
-            font-weight: bold;
-            letter-spacing: 1px;
+            font-weight: 700;
+            text-align: center;
+            background: rgba(255, 71, 87, 0.1);
+            padding: 10px;
+            border-left: 4px solid #ff4757;
         }
 
+        /* Links do Rodapé */
         .footer-links {
-            margin-top: 25px;
+            margin-top: 35px;
             display: flex;
             justify-content: space-between;
-            font-size: 0.8rem;
+            font-size: 0.85rem;
+            border-top: 1px solid rgba(255,255,255,0.05);
+            padding-top: 25px;
         }
 
-        .footer-links a {
-            color: #8fa3ad;
-            text-decoration: none;
-        }
+        .footer-links a { color: #4a6a8a; text-decoration: none; font-weight: 600; }
+        .footer-links a:hover { color: var(--azul-claro); }
 
-        .footer-links a:hover {
-            color: #ffffff;
-        }
-
-        .system-info {
+        .system-v {
             position: absolute;
             bottom: 20px;
-            right: 20px;
+            left: 30px;
             font-size: 0.7rem;
-            color: #2a415f;
-            text-align: right;
+            color: rgba(255,255,255,0.1);
+            font-weight: 700;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-8px); }
+            75% { transform: translateX(8px); }
         }
     </style>
 </head>
 <body>
 
-    <div class="bg-lines"></div>
+    <div class="bg-glow"></div>
 
-    <div class="login-container">
+    <div class="login-card">
         <div class="logo-area">
-            <h1>um<span>click</span>tecnologia</h1>
+            <h1>e-<span>smart</span></h1>
+            <div class="tagline">Inteligência Governamental</div>
         </div>
 
-        <div class="welcome-text">
-            <p>Acesso ao Ecossistema</p>
-        </div>
+        <div id="error-msg">Acesso Negado: Credenciais Inválidas</div>
 
         <form id="loginForm">
             <div class="form-group">
-                <label for="user">Identificação</label>
-                <input type="text" id="user" placeholder="E-mail ou Usuário" required>
+                <label>Identificação de Usuário</label>
+                <input type="text" id="user" placeholder="usuário" required>
             </div>
 
             <div class="form-group">
-                <label for="pass">Chave de Segurança</label>
-                <input type="password" id="pass" placeholder="••••••••" required>
-                <button type="button" class="toggle-password" onclick="toggleVisibility()">
-                    <svg id="eye-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
-                </button>
+                <label>Chave de Segurança</label>
+                <div class="input-icon-wrapper">
+                    <input type="password" id="pass" placeholder="••••••••" required>
+                    <button type="button" class="toggle-password" onclick="toggleVisibility()">
+                        <svg id="eye-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                    </button>
+                </div>
             </div>
 
-            <button type="submit" class="btn-login">Entrar no Sistema</button>
-            <p id="error-msg">Usuário ou senha incorretos</p>
+            <button type="submit" class="btn-login" id="btnLogin">Entrar no Ecossistema</button>
         </form>
 
         <div class="footer-links">
@@ -206,10 +225,7 @@
         </div>
     </div>
 
-    <div class="system-info">
-        V 1.0.0 <br>
-        Infraestrutura de alta disponibilidade
-    </div>
+    <div class="system-v">ESTAÇÃO DE TRABALHO E-SMART | V 1.0.4</div>
 
     <script>
         function toggleVisibility() {
@@ -225,24 +241,58 @@
             }
         }
 
-        // Lógica de Autenticação
         document.getElementById('loginForm').addEventListener('submit', function(e) {
             e.preventDefault();
             
-            const user = document.getElementById('user').value;
-            const pass = document.getElementById('pass').value;
+            const user = document.getElementById('user');
+            const pass = document.getElementById('pass');
+            const btn = document.getElementById('btnLogin');
             const errorMsg = document.getElementById('error-msg');
 
-            // Verificação das credenciais solicitadas
-            if (user === 'matheus' && pass === 'teste1234') {
-                // Redireciona para a página do sistema
-                window.location.href = 'Sistema_site.html';
-            } else {
-                // Exibe erro e destaca campos
-                errorMsg.style.display = 'block';
-                document.getElementById('user').style.borderColor = '#ff4b4b';
-                document.getElementById('pass').style.borderColor = '#ff4b4b';
-            }
+            btn.innerText = "Autenticando...";
+            btn.style.opacity = "0.7";
+            btn.style.pointerEvents = "none";
+
+            setTimeout(() => {
+                const username = user.value.toLowerCase();
+                const password = pass.value;
+
+                // NOVA LÓGICA DE PERFIS
+                if (password === 'admin') {
+                    if (username === 'prefeito') {
+                        localStorage.setItem('user_role', 'prefeito');
+                        localStorage.setItem('user_name', 'Prefeito');
+                        localStorage.setItem('municipioSelecionado', '1'); // Default Fortaleza
+                        window.location.href = 'Dashboard_site.html';
+                        return;
+                    } else if (username === 'contador') {
+                        localStorage.setItem('user_role', 'contador');
+                        localStorage.setItem('user_name', 'Contador');
+                        window.location.href = 'Dashboard_site.html';
+                        return;
+                    }
+                }
+
+                // Mantendo suporte ao login antigo se desejar
+                if (username === 'matheus.carvalho' && password === 'teste1234') {
+                    localStorage.setItem('user_role', 'contador');
+                    localStorage.setItem('user_name', 'Matheus');
+                    window.location.href = 'Dashboard_site.html';
+                } else {
+                    // Erro de Login
+                    btn.innerText = "Entrar no Ecossistema";
+                    btn.style.opacity = "1";
+                    btn.style.pointerEvents = "auto";
+                    
+                    errorMsg.style.display = 'block';
+                    user.style.borderColor = '#ff4757';
+                    pass.style.borderColor = '#ff4757';
+                    
+                    const card = document.querySelector('.login-card');
+                    card.style.animation = 'shake 0.4s';
+                    setTimeout(() => card.style.animation = '', 400);
+                }
+            }, 800);
         });
     </script>
 </body>

@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>e-smart | Gestão de Certidões</title>
+    <link rel="stylesheet" href="sidebar.css">
+    <style>
+        /* Reset e Base - 100% Reto */
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; border-radius: 0 !important; }
+
+        body { background-color: var(--bg-site, #f5f7fa); color: var(--texto-principal, #1a2e4d); display: flex; min-height: 100vh; overflow-x: hidden; }
+
+        main {
+            margin-left: var(--sidebar-width, 260px); flex-grow: 1;
+            padding: 30px 50px; transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        body:has(nav.sidebar.collapsed) main { margin-left: var(--sidebar-collapsed-width, 75px); }
+
+        /* Barra de Contexto - PADRONIZADA */
+        .context-bar {
+            background: #fff; border: 1px solid #e1e8ed; padding: 15px 20px;
+            margin-bottom: 25px; display: flex; align-items: center; justify-content: space-between;
+        }
+        .selector-group { display: flex; align-items: center; gap: 12px; }
+        .selector-group label { font-size: 0.75rem; font-weight: 800; color: #64748b; text-transform: uppercase; }
+        .selector-group select { padding: 8px 12px; border: 1px solid #cbd5e1; min-width: 300px; font-size: 0.95rem; font-weight: 600; color: #1a2e4d; outline: none; }
+        .municipio-fixed { font-size: 0.95rem; font-weight: 600; color: #1a2e4d; padding: 8px 0; display: inline-block; }
+
+        /* INFO DIREITA PADRONIZADA */
+        .municipio-info { font-size: 0.85rem; color: #64748b; text-align: right; line-height: 1.4; }
+        .municipio-info strong { color: #1a2e4d; font-size: 0.95rem; }
+
+        /* Header Page */
+        .header-page { margin-bottom: 20px; }
+        .header-page h2 { font-size: 1.8rem; font-weight: 700; }
+        .header-page h2 span { color: #0078d4; }
+
+        /* ESTRUTURA DE SUB-MÓDULOS (ABAS) */
+        .sub-modules-nav { display: flex; gap: 5px; margin-bottom: 25px; border-bottom: 2px solid #e1e8ed; }
+        .tab-link { padding: 10px 25px; font-size: 0.85rem; font-weight: 700; text-transform: uppercase; color: #64748b; text-decoration: none; border: 1px solid transparent; border-bottom: none; transition: all 0.2s; cursor: pointer; }
+        .tab-link:hover { color: #0078d4; background: #fff; }
+        .tab-link.active { color: #0078d4; background: #fff; border-color: #e1e8ed; margin-bottom: -2px; border-bottom: 2px solid #fff; }
+
+        /* Filtros */
+        .controls-area { margin-bottom: 20px; }
+        .search-box { position: relative; max-width: 500px; }
+        .search-box input { width: 100%; padding: 10px 15px 10px 45px; border: 1px solid #cbd5e1; font-size: 0.95rem; outline: none; background: white; }
+        .search-box svg { position: absolute; left: 15px; top: 11px; width: 18px; height: 18px; color: #64748b; }
+
+        /* Tabela */
+        .table-container { background: white; border: 1px solid #e1e8ed; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03); width: 100%; }
+        table { width: 100%; border-collapse: collapse; text-align: left; table-layout: fixed; }
+        thead { background: #f8fafc; border-bottom: 2px solid #e1e8ed; }
+        th { padding: 15px 20px; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; color: #64748b; vertical-align: middle; }
+        td { padding: 18px 20px; border-bottom: 1px solid #f1f5f9; font-size: 0.95rem; vertical-align: middle; word-wrap: break-word; }
+
+        th:nth-child(1) { width: 40%; }
+        th:nth-child(2) { width: 15%; }
+        th:nth-child(3) { width: 15%; }
+        th:nth-child(4) { width: 15%; }
+        th:nth-child(5) { width: 15%; text-align: center; }
+        
+        .nome-certidao { font-size: 1rem; font-weight: 700; color: #1a2e4d; display: block; }
+        .info-tecnica { font-size: 0.8rem; color: #64748b; display: block; margin-top: 4px; }
+
+        .badge { padding: 5px 12px; font-size: 0.75rem; font-weight: 800; text-transform: uppercase; border-radius: 20px !important; display: inline-block; white-space: nowrap; }
+        .badge.valida { background: #e8f5e9; color: #00c853; }
+        .badge.vencida { background: #ffebee; color: #ff4757; }
+        .badge.alerta { background: #fff8e1; color: #ffab00; }
+
+        .actions { display: flex; gap: 8px; justify-content: center; }
+        .btn-icon { width: 34px; height: 34px; display: flex; align-items: center; justify-content: center; border: 1px solid #cbd5e1; background: white; cursor: pointer; color: #64748b; }
+        .btn-icon:hover { border-color: #0078d4; color: #0078d4; background: #f0f7ff; }
+        .btn-icon svg { width: 18px; height: 18px; }
+
+        .btn-sync-all { background: #fff; border: 1px solid #0078d4; color: #0078d4; padding: 4px 8px; font-size: 0.65rem; font-weight: 800; text-transform: uppercase; cursor: pointer; display: inline-flex; align-items: center; gap: 4px; transition: all 0.2s; }
+        .btn-sync-all:hover { background: #0078d4; color: #fff; }
+
+        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        .loading svg { animation: spin 1s linear infinite; color: #0078d4 !important; }
+        .success { border-color: #00c853 !important; color: #00c853 !important; }
+    </style>
+</head>
+<body>
+
+    <main>
+        <div class="context-bar">
+            <div class="selector-group" id="selectorGroup">
+                <label style="font-weight: 900;">Município:</label>
+            </div>
+            <div class="municipio-info">
+                <div>CNPJ: <span id="cnpjLabel"><strong>07.954.605/0001-60</strong></span></div>
+                <div style="font-size: 0.75rem; margin-top: 3px;">Informação obtida em: <strong>14/01/2026 10:28:05</strong></div>
+            </div>
+        </div>
+
+        <div class="header-page">
+            <h2>Gestão de <span>Certidões</span></h2>
+            <p style="font-size: 0.9rem; color: #64748b; margin-top: 5px;">Relatório de regularidade e conformidade institucional</p>
+        </div>
+
+        <nav class="sub-modules-nav">
+            <a href="Certidoes_site.html" class="tab-link active">Regularidade Atual</a>
+            <a href="Historico_certidoes_site.html" class="tab-link">Histórico 24 Meses</a>
+        </nav>
+
+        <div class="controls-area">
+            <div class="search-box">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                <input type="text" placeholder="Filtrar por nome ou órgão emissor..." onkeyup="filterTable(this)">
+            </div>
+        </div>
+
+        <div class="table-container">
+            <table id="certTable">
+                <thead>
+                    <tr>
+                        <th>Certidão / Detalhes</th>
+                        <th>Órgão</th>
+                        <th>Status</th>
+                        <th>Vencimento</th>
+                        <th style="text-align: center;">
+                            <button class="btn-sync-all" onclick="sincronizarTodas()">
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M23 4v6h-6"></path><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path></svg>
+                                Sincronizar Todas
+                            </button>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                            <span class="nome-certidao">CND Federal (Tributos e Dívida Ativa)</span>
+                            <small style="color: #64748b; font-size: 0.8rem;">Receita Federal e PGFN</small>
+                            <span class="info-tecnica">Nº Certificação: <strong>2026010802260134659370</strong></span>
+                        </td>
+                        <td>RFB / PGFN</td>
+                        <td><span class="badge valida">● Válida</span></td>
+                        <td>12/05/2026</td>
+                        <td class="actions">
+                            <button class="btn-icon" title="Ver PDF"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg></button>
+                            <button class="btn-icon refresh-btn" title="Atualizar" onclick="animarRefresh(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 4v6h-6"></path><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path></svg></button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <span class="nome-certidao">FGTS (CRF)</span>
+                            <small style="color: #64748b; font-size: 0.8rem;">Caixa Econômica Federal</small>
+                            <span class="info-tecnica">Nº Certificação: <strong>2026010802260134659370</strong></span>
+                        </td>
+                        <td>CEF</td>
+                        <td><span class="badge alerta">● Alerta</span></td>
+                        <td>25/01/2026</td>
+                        <td class="actions">
+                            <button class="btn-icon" title="Ver PDF"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg></button>
+                            <button class="btn-icon refresh-btn" title="Atualizar" onclick="animarRefresh(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 4v6h-6"></path><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path></svg></button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <span class="nome-certidao">CND Trabalhista (CNDT)</span>
+                            <small style="color: #64748b; font-size: 0.8rem;">Tribunal Superior do Trabalho</small>
+                            <span class="info-tecnica">Nº Certificação: <strong>2026010802260134659370</strong></span>
+                        </td>
+                        <td>TST</td>
+                        <td><span class="badge vencida">● Vencida</span></td>
+                        <td>10/01/2026</td>
+                        <td class="actions">
+                            <button class="btn-icon" title="Ver PDF"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg></button>
+                            <button class="btn-icon refresh-btn" title="Atualizar" onclick="animarRefresh(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 4v6h-6"></path><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path></svg></button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <span class="nome-certidao">Certificado de Reg. Previdenciária (CRP)</span>
+                            <small style="color: #64748b; font-size: 0.8rem;">Min. da Previdência Social</small>
+                            <span class="info-tecnica">Nº Certificação: <strong>2026010802260134659370</strong></span>
+                        </td>
+                        <td>MPS</td>
+                        <td><span class="badge valida">● Válida</span></td>
+                        <td>30/06/2026</td>
+                        <td class="actions">
+                            <button class="btn-icon" title="Ver PDF"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg></button>
+                            <button class="btn-icon refresh-btn" title="Atualizar" onclick="animarRefresh(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 4v6h-6"></path><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path></svg></button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <span class="nome-certidao">Contas Irregulares (TCE-CE)</span>
+                            <small style="color: #64748b; font-size: 0.8rem;">Tribunal de Contas do Estado</small>
+                            <span class="info-tecnica">Nº Certificação: <strong>2026010802260134659370</strong></span>
+                        </td>
+                        <td>TCE-CE</td>
+                        <td><span class="badge valida">● Válida</span></td>
+                        <td>15/09/2026</td>
+                        <td class="actions">
+                            <button class="btn-icon" title="Ver PDF"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg></button>
+                            <button class="btn-icon refresh-btn" title="Atualizar" onclick="animarRefresh(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 4v6h-6"></path><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path></svg></button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </main>
+
+    <script src="sidebar.js"></script>
+    <script>
+        const municipios = {
+            "1": "Prefeitura Municipal de Fortaleza/CE",
+            "2": "Prefeitura Municipal de Sobral/CE",
+            "3": "Prefeitura Municipal de Caucaia/CE",
+            "4": "Prefeitura Municipal de Maracanaú/CE"
+        };
+
+        function filterTable(input) {
+            const filter = input.value.toLowerCase();
+            const rows = document.querySelectorAll("#certTable tbody tr");
+            rows.forEach(row => { row.style.display = row.innerText.toLowerCase().includes(filter) ? "" : "none"; });
+        }
+
+        function atualizarMunicipio() {
+            const userRole = localStorage.getItem('user_role');
+            const cnpjs = { "1": "07.954.605/0001-60", "2": "07.592.124/0001-45", "3": "07.412.352/0001-99", "4": "08.324.781/0001-10" };
+            
+            let selectedId;
+            if (userRole === 'contador') {
+                const select = document.getElementById('municipioSelect');
+                selectedId = select ? select.value : "1";
+            } else {
+                selectedId = localStorage.getItem('municipioSelecionado') || "1";
+            }
+
+            localStorage.setItem('municipioSelecionado', selectedId);
+            const cnpjLabel = document.getElementById('cnpjLabel');
+            if(cnpjLabel) cnpjLabel.innerHTML = `<strong>${cnpjs[selectedId]}</strong>`;
+        }
+
+        window.onload = function () {
+            const userRole = localStorage.getItem('user_role');
+            const salvo = localStorage.getItem('municipioSelecionado') || "1";
+            const selectorGroup = document.getElementById('selectorGroup');
+
+            if (userRole === 'contador') {
+                selectorGroup.innerHTML += `
+                    <select id="municipioSelect" onchange="atualizarMunicipio()">
+                        <option value="1" ${salvo === '1' ? 'selected' : ''}>Prefeitura Municipal de Fortaleza/CE</option>
+                        <option value="2" ${salvo === '2' ? 'selected' : ''}>Prefeitura Municipal de Sobral/CE</option>
+                        <option value="3" ${salvo === '3' ? 'selected' : ''}>Prefeitura Municipal de Caucaia/CE</option>
+                        <option value="4" ${salvo === '4' ? 'selected' : ''}>Prefeitura Municipal de Maracanaú/CE</option>
+                    </select>
+                `;
+            } else {
+                selectorGroup.innerHTML += `<span class="municipio-fixed">${municipios[salvo]}</span>`;
+            }
+
+            atualizarMunicipio();
+        }
+
+        function animarRefresh(btn) {
+            if(btn.classList.contains('loading')) return;
+            const originalIcon = btn.innerHTML;
+            const checkIcon = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>`;
+            btn.classList.add('loading');
+            btn.style.pointerEvents = 'none';
+            setTimeout(() => {
+                btn.classList.remove('loading');
+                btn.classList.add('success');
+                btn.innerHTML = checkIcon;
+                setTimeout(() => {
+                    btn.classList.remove('success');
+                    btn.innerHTML = originalIcon;
+                    btn.style.pointerEvents = 'auto';
+                }, 4000);
+            }, 2000);
+        }
+
+        function sincronizarTodas() {
+            document.querySelectorAll('.refresh-btn').forEach(btn => { animarRefresh(btn); });
+        }
+    </script>
+</body>
+</html>

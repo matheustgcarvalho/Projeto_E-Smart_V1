@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>e-smart | e-Parcerias CGE</title>
+    <link rel="stylesheet" href="sidebar.css">
+    <style>
+        /* Reset e Base - 100% Reto */
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; border-radius: 0 !important; }
+
+        body { background-color: var(--bg-site, #f5f7fa); color: #1a2e4d; display: flex; min-height: 100vh; overflow-x: hidden; }
+
+        main {
+            margin-left: var(--sidebar-width, 260px); flex-grow: 1;
+            padding: 30px 50px; transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        body:has(nav.sidebar.collapsed) main { margin-left: var(--sidebar-collapsed-width, 75px); }
+
+        .context-bar {
+            background: #fff; border: 1px solid #e1e8ed; padding: 15px 20px;
+            margin-bottom: 25px; display: flex; align-items: center; justify-content: space-between;
+        }
+
+        .selector-group { display: flex; align-items: center; gap: 12px; }
+        .selector-group label { font-size: 0.75rem; font-weight: 800; color: #64748b; text-transform: uppercase; }
+        .selector-group select { padding: 8px 12px; border: 1px solid #cbd5e1; min-width: 300px; font-size: 0.95rem; font-weight: 600; color: #1a2e4d; outline: none; }
+        /* Estilo para manter o alinhamento do texto fixo do Prefeito */
+        .municipio-fixed { font-size: 0.95rem; font-weight: 600; color: #1a2e4d; padding: 8px 0; display: inline-block; }
+
+        .municipio-info { font-size: 0.85rem; color: #64748b; text-align: right; line-height: 1.4; }
+        .municipio-info strong { color: #1a2e4d; font-size: 0.95rem; }
+
+        .header-page {
+            display: flex; justify-content: space-between; align-items: flex-end;
+            margin-bottom: 20px; border-bottom: 2px solid #e1e8ed; padding-bottom: 15px;
+        }
+
+        .header-page h2 { font-size: 1.8rem; font-weight: 700; }
+        .header-page h2 span { color: #0078d4; }
+
+        .header-actions { display: flex; gap: 10px; }
+        .btn-action { padding: 10px 18px; font-weight: 600; font-size: 0.85rem; cursor: pointer; display: flex; align-items: center; gap: 10px; border: none; transition: 0.2s; }
+        .btn-report { background: white; color: #1a2e4d; border: 1px solid #cbd5e1; }
+        .btn-report:hover { background: #f8fafc; border-color: #0078d4; color: #0078d4; }
+        .btn-sync { background: #0078d4; color: white; }
+
+        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        .btn-sync.loading svg { animation: spin 1s linear infinite; }
+        .btn-sync.success { background-color: #00c853 !important; }
+
+        .sub-modules-nav { display: flex; gap: 5px; margin-bottom: 25px; border-bottom: 2px solid #e1e8ed; }
+        .tab-link { padding: 10px 25px; font-size: 0.85rem; font-weight: 700; text-transform: uppercase; color: #64748b; text-decoration: none; border: 1px solid transparent; border-bottom: none; cursor: pointer; transition: 0.2s; }
+        .tab-link:hover { color: #0078d4; background: #fff; }
+        .tab-link.active { color: #0078d4; background: #fff; border-color: #e1e8ed; margin-bottom: -2px; border-bottom: 2px solid #fff; }
+
+        .summary-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 30px; }
+        .summary-card { background: white; padding: 18px; border: 1px solid #e1e8ed; border-left: 4px solid #cbd5e1; }
+        .summary-card h4 { font-size: 0.75rem; text-transform: uppercase; color: #64748b; margin-bottom: 8px; }
+        .summary-card .value { font-size: 1.6rem; font-weight: 700; }
+        .card-regular { border-left-color: #00c853; }
+        .card-regular .value { color: #00c853; }
+        .card-irregular { border-left-color: #ff4757; }
+        .card-irregular .value { color: #ff4757; }
+
+        .table-container { background: white; border: 1px solid #e1e8ed; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03); }
+        table { width: 100%; border-collapse: collapse; text-align: left; }
+        thead { background: #f8fafc; }
+        th { padding: 15px 20px; font-size: 0.8rem; text-transform: uppercase; color: #64748b; border-bottom: 2px solid #e1e8ed; }
+        td { padding: 18px 20px; border-bottom: 1px solid #f1f5f9; font-size: 0.95rem; vertical-align: middle; }
+        .status-pill { padding: 5px 14px; font-size: 0.7rem; font-weight: 800; text-transform: uppercase; display: inline-flex; align-items: center; gap: 5px; border-radius: 20px !important; }
+        .pill-regular { background: #e8f5e9; color: #00c853; }
+        .pill-irregular { background: #ffebee; color: #ff4757; }
+    </style>
+</head>
+
+<body>
+    <main>
+        <div class="context-bar">
+            <div class="selector-group" id="selectorGroup">
+                <label style="font-weight: 900;">Município:</label>
+                </div>
+            <div class="municipio-info">
+                <div>CNPJ: <span id="cnpjLabel"><strong>07.954.605/0001-60</strong></span></div>
+                <div style="font-size: 0.75rem; margin-top: 3px;">Informação obtida em: <strong>14/01/2026 10:28:05</strong></div>
+            </div>
+        </div>
+
+        <div class="header-page">
+            <div>
+                <h2>Portal <span>e-Parcerias</span></h2>
+                <p style="font-size: 0.9rem; color: #64748b; margin-top: 5px;">Sistema de Gestão de Parcerias do Estado do Ceará (CGE)</p>
+            </div>
+            <div class="header-actions">
+                <button class="btn-action btn-report" onclick="alert('Exportando Relatório CGE...')">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
+                    Gerar Relatório
+                </button>
+                <button class="btn-action btn-sync" id="syncBtn" onclick="animarSync(this)">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M23 4v6h-6"></path><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path></svg>
+                    <span>Sincronizar CGE</span>
+                </button>
+            </div>
+        </div>
+
+        <nav class="sub-modules-nav">
+            <a href="E_parcerias_site.html" class="tab-link active">Situação de Regularidade</a>
+            <a href="Convenios_repasses_site.html" class="tab-link">Convênios e Repasses</a>
+        </nav>
+
+        <div class="summary-grid">
+            <div class="summary-card card-regular"><h4>Status Geral</h4><div class="value">ADIMPLENTE</div></div>
+            <div class="summary-card"><h4>Itens Analisados</h4><div class="value">08</div></div>
+            <div class="summary-card card-irregular"><h4>Pendências Estaduais</h4><div class="value">00</div></div>
+        </div>
+
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Item</th>
+                        <th>Descrição da Exigência (Decreto 32.810/18)</th>
+                        <th>Situação</th>
+                        <th>Validade</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td><strong>1</strong></td><td>Regularidade com a Fazenda Estadual (Sefaz)</td><td><span class="status-pill pill-regular">● Regular</span></td><td>15/03/2026</td></tr>
+                    <tr><td><strong>2</strong></td><td>Regularidade com o Tribunal de Contas (TCE-CE)</td><td><span class="status-pill pill-regular">● Regular</span></td><td>30/06/2026</td></tr>
+                    <tr><td><strong>3</strong></td><td>Prestação de Contas de Convênios Anteriores</td><td><span class="status-pill pill-regular">● Regular</span></td><td>Análise 2025/2026</td></tr>
+                    <tr><td><strong>4</strong></td><td>Transparência Pública (Lei 15.175/12)</td><td><span class="status-pill pill-regular">● Regular</span></td><td>Monitoramento Diário</td></tr>
+                    <tr><td><strong>5</strong></td><td>Aplicação do Limite Mínimo em Saúde (SIOPS)</td><td><span class="status-pill pill-regular">● Regular</span></td><td>6º Bimestre/2025</td></tr>
+                    <tr><td><strong>6</strong></td><td>Aplicação do Limite Mínimo em Educação (SIOPE)</td><td><span class="status-pill pill-regular">● Regular</span></td><td>6º Bimestre/2025</td></tr>
+                    <tr><td><strong>7</strong></td><td>Publicação do RREO e RGF (Siconfi)</td><td><span class="status-pill pill-regular">● Regular</span></td><td>3º Quadrimestre</td></tr>
+                    <tr><td><strong>8</strong></td><td>Regularidade Previdenciária Estadual (Seplag)</td><td><span class="status-pill pill-regular">● Regular</span></td><td>Certificado Ativo</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </main>
+
+    <script src="sidebar.js"></script>
+    <script>
+        const municipios = {
+            "1": "Prefeitura Municipal de Fortaleza/CE",
+            "2": "Prefeitura Municipal de Sobral/CE",
+            "3": "Prefeitura Municipal de Caucaia/CE",
+            "4": "Prefeitura Municipal de Maracanaú/CE"
+        };
+
+        function atualizarMunicipio() {
+            const userRole = localStorage.getItem('user_role');
+            const cnpjs = { "1": "07.954.605/0001-60", "2": "07.592.124/0001-45", "3": "07.412.352/0001-99", "4": "08.324.781/0001-10" };
+            
+            let selectedId;
+            if (userRole === 'contador') {
+                const select = document.getElementById('municipioSelect');
+                selectedId = select.value;
+            } else {
+                selectedId = localStorage.getItem('municipioSelecionado') || "1";
+            }
+
+            localStorage.setItem('municipioSelecionado', selectedId);
+            document.getElementById('cnpjLabel').innerHTML = `<strong>${cnpjs[selectedId]}</strong>`;
+        }
+
+        window.onload = function () {
+            const userRole = localStorage.getItem('user_role');
+            const salvo = localStorage.getItem('municipioSelecionado') || "1";
+            const selectorGroup = document.getElementById('selectorGroup');
+
+            if (userRole === 'contador') {
+                selectorGroup.innerHTML += `
+                    <select id="municipioSelect" onchange="atualizarMunicipio()">
+                        <option value="1" ${salvo === '1' ? 'selected' : ''}>Prefeitura Municipal de Fortaleza/CE</option>
+                        <option value="2" ${salvo === '2' ? 'selected' : ''}>Prefeitura Municipal de Sobral/CE</option>
+                        <option value="3" ${salvo === '3' ? 'selected' : ''}>Prefeitura Municipal de Caucaia/CE</option>
+                        <option value="4" ${salvo === '4' ? 'selected' : ''}>Prefeitura Municipal de Maracanaú/CE</option>
+                    </select>
+                `;
+            } else {
+                selectorGroup.innerHTML += `<span class="municipio-fixed">${municipios[salvo]}</span>`;
+            }
+
+            atualizarMunicipio();
+        }
+
+        function animarSync(btn) {
+            const span = btn.querySelector('span');
+            const originalText = span.innerText;
+            const originalIcon = btn.querySelector('svg').outerHTML;
+            const checkIcon = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>`;
+
+            btn.classList.add('loading');
+            span.innerText = "Consultando CGE...";
+            btn.style.pointerEvents = 'none';
+
+            setTimeout(() => {
+                btn.classList.remove('loading');
+                btn.classList.add('success');
+                btn.innerHTML = checkIcon + " <span>Sincronizado!</span>";
+
+                setTimeout(() => {
+                    btn.classList.remove('success');
+                    btn.innerHTML = originalIcon + " <span>" + originalText + "</span>";
+                    btn.style.pointerEvents = 'auto';
+                }, 4000);
+            }, 2000);
+        }
+    </script>
+</body>
+</html>
